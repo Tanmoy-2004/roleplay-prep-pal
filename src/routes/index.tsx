@@ -1,11 +1,20 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Code2, LineChart, Monitor, Loader2, ArrowRight } from "lucide-react";
-import { generateQuestions, type Role } from "@/lib/interview.functions";
-import { ROLE_META, saveSession, clearAll } from "@/lib/interview-store";
+import { Code2, LineChart, Monitor, ArrowRight } from "lucide-react";
+import type { Role } from "@/lib/interview.functions";
+import { ROLE_META, saveRole, clearAll } from "@/lib/interview-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "InterviewPilot — Pick a role" },
+      {
+        name: "description",
+        content: "Practice mock interviews for SDE, data, and frontend roles with instant AI feedback.",
+      },
+    ],
+  }),
   component: Landing,
 });
 
@@ -18,28 +27,12 @@ const ROLES: Array<{ id: Role; icon: React.ComponentType<{ className?: string }>
 function Landing() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState<Role | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const start = async () => {
+  const start = () => {
     if (!selected) return;
-    setLoading(true);
-    setError(null);
-    try {
-      clearAll();
-      const { questions } = await generateQuestions({ data: { role: selected } });
-      saveSession({
-        role: selected,
-        roleLabel: ROLE_META[selected].label,
-        questions,
-        answers: new Array(questions.length).fill(""),
-        timeSpent: new Array(questions.length).fill(0),
-      });
-      navigate({ to: "/interview" });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to start interview");
-      setLoading(false);
-    }
+    clearAll();
+    saveRole(selected);
+    navigate({ to: "/interview" });
   };
 
   return (
@@ -119,30 +112,21 @@ function Landing() {
 
           <div className="mt-10 flex items-center gap-4">
             <button
-              disabled={!selected || loading}
+              disabled={!selected}
               onClick={start}
               className={cn(
                 "inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all",
                 "hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50",
               )}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Preparing questions…
-                </>
-              ) : (
-                <>
-                  Start interview <ArrowRight className="h-4 w-4" />
-                </>
-              )}
+              Start interview <ArrowRight className="h-4 w-4" />
             </button>
-            {selected && !loading && (
+            {selected && (
               <span className="text-sm text-muted-foreground">
                 5 questions · ~10 minutes · 90s per question
               </span>
             )}
           </div>
-          {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
         </section>
       </main>
     </div>
