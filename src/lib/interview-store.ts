@@ -1,22 +1,8 @@
 import type { Role } from "./interview.functions";
 
-export type InterviewSession = {
-  role: Role;
-  roleLabel: string;
-  questions: string[];
-  answers: string[];
-  timeSpent: number[];
-};
-
-export type InterviewReport = {
-  overallScore: number;
-  strengths: string[];
-  weaknesses: string[];
-  perQuestion: Array<{ score: number; feedback: string; modelAnswer: string }>;
-};
-
-const SESSION_KEY = "interviewpilot:session";
-const REPORT_KEY = "interviewpilot:report";
+const ROLE_KEY = "interviewpilot:role";
+const FINAL_KEY = "interviewpilot:final";
+const ROLE_LABEL_KEY = "interviewpilot:role-label";
 
 export const ROLE_META: Record<Role, { label: string; blurb: string; skills: string[] }> = {
   "sde-intern": {
@@ -36,23 +22,27 @@ export const ROLE_META: Record<Role, { label: string; blurb: string; skills: str
   },
 };
 
-export function saveSession(s: InterviewSession) {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(s));
+export function saveRole(role: Role) {
+  sessionStorage.setItem(ROLE_KEY, role);
+  sessionStorage.setItem(ROLE_LABEL_KEY, ROLE_META[role].label);
 }
-export function loadSession(): InterviewSession | null {
+export function loadRole(): { role: Role; label: string } | null {
   if (typeof window === "undefined") return null;
-  const raw = sessionStorage.getItem(SESSION_KEY);
-  return raw ? (JSON.parse(raw) as InterviewSession) : null;
+  const role = sessionStorage.getItem(ROLE_KEY) as Role | null;
+  const label = sessionStorage.getItem(ROLE_LABEL_KEY);
+  return role && label ? { role, label } : null;
 }
-export function saveReport(r: InterviewReport) {
-  sessionStorage.setItem(REPORT_KEY, JSON.stringify(r));
+export function saveFinalSummary(text: string) {
+  sessionStorage.setItem(FINAL_KEY, text);
 }
-export function loadReport(): InterviewReport | null {
+export function loadFinalSummary(): string | null {
   if (typeof window === "undefined") return null;
-  const raw = sessionStorage.getItem(REPORT_KEY);
-  return raw ? (JSON.parse(raw) as InterviewReport) : null;
+  return sessionStorage.getItem(FINAL_KEY);
 }
 export function clearAll() {
-  sessionStorage.removeItem(SESSION_KEY);
-  sessionStorage.removeItem(REPORT_KEY);
+  sessionStorage.removeItem(ROLE_KEY);
+  sessionStorage.removeItem(ROLE_LABEL_KEY);
+  sessionStorage.removeItem(FINAL_KEY);
 }
+
+export const SUMMARY_MARKER = "Interview Summary";
