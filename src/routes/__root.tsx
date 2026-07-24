@@ -77,20 +77,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "InterviewPilot — AI Mock Interviews" },
+      { title: "InterviewPilot — Pick a role" },
       {
         name: "description",
         content:
-          "Practice job interviews with an AI interviewer. Get timed questions, real-time feedback, and a detailed report card.",
+          "Practice mock interviews for SDE, data, and frontend roles with instant AI feedback.",
       },
       { name: "author", content: "InterviewPilot" },
-      { property: "og:title", content: "InterviewPilot — AI Mock Interviews" },
+      { property: "og:title", content: "InterviewPilot — Pick a role" },
       {
         property: "og:description",
-        content: "Timed mock interviews with instant AI feedback and model answers.",
+        content: "Practice mock interviews for SDE, data, and frontend roles with instant AI feedback.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "InterviewPilot — Pick a role" },
+      { name: "twitter:description", content: "Practice mock interviews for SDE, data, and frontend roles with instant AI feedback." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/95320268-a94b-48f2-a40c-d437c6557c54" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/95320268-a94b-48f2-a40c-d437c6557c54" },
     ],
     links: [
       {
